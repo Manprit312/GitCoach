@@ -6,7 +6,7 @@
     "dev:server": "npm run dev --prefix server",
     "dev:web": "npm start --prefix web",
     "dev": "npm run dev:server & npm run dev:web",
-    "build": "npm run build --prefix web",
-    "start": "npm run start --prefix server"
+    "build:web": "npm run build --prefix web",
+    "start:server": "npm run start --prefix server"
   }
 }

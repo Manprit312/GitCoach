@@ -28,8 +28,10 @@ Create a **public repo** for hackathon submission and push this project.
 
 1. Go to [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo**
 2. Select **Manprit312/GitCoach**
-3. **Settings → Root Directory** → set to `server`
-4. **Variables** → add:
+3. **Important:** open the service → **Settings** → **Root Directory** → set to `server` → **Save**
+   - If you skip this, Railway builds the whole repo and fails with `ng: not found`
+4. **Settings → Deploy** → confirm **Start Command** is `npm start`
+5. **Variables** → add:
 
 | Variable | Value |
 |---|---|
