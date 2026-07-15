@@ -1,0 +1,267 @@
+.coach-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.coach-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+  }
+}
+
+.auth {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  img {
+    border-radius: 999px;
+  }
+
+  .hint {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+}
+
+.steps {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.step-tab {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+
+  &.active {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  margin: 0.75rem 0 1rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.issue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.issue-card {
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: inherit;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  display: grid;
+  gap: 0.35rem;
+
+  &:hover {
+    border-color: var(--accent);
+  }
+}
+
+.issue-num {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.issue-title {
+  font-weight: 600;
+}
+
+.labels {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.label {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .analysis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.badges {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.badge {
+  text-transform: capitalize;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+
+  &.muted {
+    background: var(--border);
+    color: var(--muted);
+  }
+}
+
+.file-list,
+.tips,
+.plan-steps {
+  padding-left: 1.1rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.file-list li {
+  margin-bottom: 0.75rem;
+
+  code {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+  }
+}
+
+.plan-steps p {
+  margin: 0.25rem 0 0;
+}
+
+.pr-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 0.75rem 0 1rem;
+
+  h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+  }
+
+  pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 260px;
+  overflow: auto;
+  margin: 0.75rem 0;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.chat-msg {
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  font-size: 0.9rem;
+  line-height: 1.5;
+
+  &.user {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    align-self: flex-end;
+    max-width: 90%;
+  }
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #f87171;
+  background: color-mix(in srgb, #f87171 12%, transparent);
+  color: #fecaca;
+}
+
+.loading-msg {
+  text-align: center;
+  padding: 2rem;
+}
+
+.side h3 {
+  margin-top: 1.25rem;
+}

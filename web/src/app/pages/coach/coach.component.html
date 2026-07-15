@@ -1,0 +1,204 @@
+<div class="coach-layout">
+  <header class="coach-header">
+    <div>
+      <p class="eyebrow">Contribution mission</p>
+      <h1>Build your pull request with confidence</h1>
+    </div>
+    <div class="auth">
+      @if (user(); as profile) {
+        <img [src]="profile.avatar_url" [alt]="profile.login + ' avatar'" width="32" height="32" />
+        <span>{{ profile.name ?? profile.login }}</span>
+        <button type="button" class="btn ghost small" (click)="logout()">Sign out</button>
+      } @else if (oauthConfigured()) {
+        <button type="button" class="btn ghost small" (click)="login()">Connect GitHub</button>
+      } @else {
+        <span class="hint">Public repos work without login</span>
+      }
+    </div>
+  </header>
+
+  <nav class="steps" aria-label="Mission progress">
+    <button
+      type="button"
+      class="step-tab"
+      [class.active]="wizardStep() === 'repo'"
+      (click)="goToStep('repo')"
+    >
+      1. Repository
+    </button>
+    <button
+      type="button"
+      class="step-tab"
+      [class.active]="wizardStep() === 'issues'"
+      [disabled]="!repo()"
+      (click)="goToStep('issues')"
+    >
+      2. Issue
+    </button>
+    <button
+      type="button"
+      class="step-tab"
+      [class.active]="wizardStep() === 'analysis'"
+      [disabled]="!analysis()"
+      (click)="goToStep('analysis')"
+    >
+      3. Plan & PR
+    </button>
+  </nav>
+
+  @if (error(); as message) {
+    <div class="alert" role="alert">{{ message }}</div>
+  }
+
+  @if (wizardStep() === 'repo') {
+    <section class="panel" aria-labelledby="repo-heading">
+      <h2 id="repo-heading">Which repository do you want to contribute to?</h2>
+      <p class="muted">
+        Paste a GitHub URL or use <code>owner/repo</code>. Try a repo with open issues.
+      </p>
+      <label class="field">
+        <span class="sr-only">Repository URL or owner/repo</span>
+        <input
+          type="text"
+          [ngModel]="repoInput()"
+          (ngModelChange)="repoInput.set($event)"
+          placeholder="e.g. vercel/next.js or https://github.com/vercel/next.js"
+          autocomplete="url"
+        />
+      </label>
+      <button type="button" class="btn primary" [disabled]="loading()" (click)="loadRepo()">
+        {{ loading() ? 'Loading…' : 'Find issues' }}
+      </button>
+    </section>
+  }
+
+  @if (wizardStep() === 'issues') {
+    <section class="panel" aria-labelledby="issues-heading">
+      <div class="panel-head">
+        <div>
+          <h2 id="issues-heading">Open issues in {{ repoLabel() }}</h2>
+          <p class="muted">Pick an issue to generate your personalized contribution plan.</p>
+        </div>
+        <label class="toggle">
+          <input
+            type="checkbox"
+            [ngModel]="filterGoodFirst()"
+            (ngModelChange)="filterGoodFirst.set($event); loadIssues()"
+          />
+          Good first issue only
+        </label>
+      </div>
+
+      @if (loading()) {
+        <p class="muted" aria-live="polite">Loading issues…</p>
+      } @else {
+        <ul class="issue-list">
+          @for (issue of issues(); track issue.number) {
+            <li>
+              <button type="button" class="issue-card" (click)="selectIssue(issue)">
+                <span class="issue-num">#{{ issue.number }}</span>
+                <span class="issue-title">{{ issue.title }}</span>
+                @if (issue.labels.length) {
+                  <span class="labels">
+                    @for (label of issue.labels.slice(0, 3); track label.name) {
+                      <span class="label">{{ label.name }}</span>
+                    }
+                  </span>
+                }
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+
+  @if (wizardStep() === 'analysis') {
+    @if (loading() && !analysis()) {
+      <p class="muted loading-msg" aria-live="polite">
+        GitCoach is reading the repo and building your mission plan…
+      </p>
+    }
+
+    @if (analysis(); as plan) {
+      <div class="analysis-grid">
+        <section class="panel" aria-labelledby="summary-heading">
+          <div class="badges">
+            <span class="badge">{{ plan.difficulty }}</span>
+            <span class="badge muted">~{{ plan.estimatedMinutes }} min</span>
+          </div>
+          <h2 id="summary-heading">{{ selectedIssue()?.title }}</h2>
+          <p>{{ plan.summary }}</p>
+          <h3>Issue context</h3>
+          <p class="muted">{{ plan.issueContext }}</p>
+
+          <h3>Relevant files</h3>
+          <ul class="file-list">
+            @for (file of plan.relevantFiles; track file.path) {
+              <li>
+                <code>{{ file.path }}</code>
+                <span>{{ file.explanation }}</span>
+              </li>
+            }
+          </ul>
+
+          <h3>Step-by-step plan</h3>
+          <ol class="plan-steps">
+            @for (step of plan.steps; track step.order) {
+              <li>
+                <strong>{{ step.title }}</strong>
+                <p>{{ step.description }}</p>
+              </li>
+            }
+          </ol>
+
+          @if (plan.tips.length) {
+            <h3>Tips</h3>
+            <ul class="tips">
+              @for (tip of plan.tips; track tip) {
+                <li>{{ tip }}</li>
+              }
+            </ul>
+          }
+        </section>
+
+        <section class="panel side" aria-labelledby="pr-heading">
+          <h2 id="pr-heading">PR draft</h2>
+          <p class="muted">Copy this when you are ready to open your pull request.</p>
+          <div class="pr-box">
+            <h3>{{ plan.prDraft.title }}</h3>
+            <pre>{{ plan.prDraft.body }}</pre>
+          </div>
+          <button type="button" class="btn primary" (click)="copyPr()">Copy PR text</button>
+
+          <h3 id="chat-heading">Ask your coach</h3>
+          <div class="chat" role="log" aria-labelledby="chat-heading" aria-live="polite">
+            @for (msg of chatMessages(); track $index) {
+              <div class="chat-msg" [class.user]="msg.role === 'user'">
+                {{ msg.content }}
+              </div>
+            }
+          </div>
+          <label class="field">
+            <span class="sr-only">Ask a question</span>
+            <textarea
+              rows="3"
+              [ngModel]="chatInput()"
+              (ngModelChange)="chatInput.set($event)"
+              (keydown)="onChatKeydown($event)"
+              placeholder="Ask about the codebase while you work…"
+            ></textarea>
+          </label>
+          <button
+            type="button"
+            class="btn ghost"
+            [disabled]="loading() || !chatInput().trim()"
+            (click)="sendChat()"
+          >
+            Send
+          </button>
+        </section>
+      </div>
+    }
+  }
+</div>
